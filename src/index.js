@@ -2,7 +2,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors'); // Importa la librería CORS
 const config = require('../config/config'); // Asegúrate de usar la ruta correcta
-
+const clienteRoutes = require('./routes/clienteRoutes');
+const sequelize = require('../config/sequelize'); // Asegúrate de usar la ruta correcta para la configuración de Sequelize
 const app = express();
 const port = config.PORT; // Utiliza el puerto definido en config.js
 
@@ -20,11 +21,22 @@ app.get('/', (req, res) => {
   `);
 });
 
+// Usa las rutas para los clientes
+app.use('/api', clienteRoutes);
+
 // Ruta para manejar solicitudes no encontradas
 app.use((req, res) => {
   res.status(404).send('Ruta no encontrada');
 });
 
-app.listen(port, () => {
-  console.log(`Servidor corriendo en http://localhost:${port}`);
-});
+// Sincronizar la base de datos y arrancar el servidor
+sequelize.sync()
+  .then(() => {
+    console.log('Base de datos sincronizada');
+    app.listen(port, () => {
+      console.log(`Servidor corriendo en http://localhost:${port}`);
+    });
+  })
+  .catch((error) => {
+    console.error('Error al sincronizar la base de datos:', error);
+  });
