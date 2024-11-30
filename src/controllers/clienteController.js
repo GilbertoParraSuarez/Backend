@@ -1,14 +1,15 @@
+// src/controllers/clienteController.js
 const Cliente = require('../models/cliente');
 
 // Crear un cliente
 const crearCliente = async (req, res) => {
   try {
-    const { nombre, apellido, identificacion, categoria } = req.body;
-    const cliente = await Cliente.create({ nombre, apellido, identificacion, categoria });
+    const { nombres, apellidos, identificacion, categoria, observacion } = req.body;
+    const cliente = await Cliente.create({ nombres, apellidos, identificacion, categoria, observacion });
     res.status(201).json(cliente);
   } catch (error) {
-    console.error('Error al crear cliente:', error);
-    res.status(500).json({ error: 'Error al crear cliente' });
+    console.error(error);
+    res.status(500).json({ message: 'Error al crear cliente' });
   }
 };
 
@@ -18,60 +19,59 @@ const obtenerClientes = async (req, res) => {
     const clientes = await Cliente.findAll();
     res.status(200).json(clientes);
   } catch (error) {
-    console.error('Error al obtener clientes:', error);
-    res.status(500).json({ error: 'Error al obtener clientes' });
+    console.error(error);
+    res.status(500).json({ message: 'Error al obtener clientes' });
   }
 };
 
-// Obtener un cliente por ID
+// Obtener un cliente por su ID
 const obtenerClientePorId = async (req, res) => {
-  const { id } = req.params;
   try {
+    const { id } = req.params;
     const cliente = await Cliente.findByPk(id);
-    if (!cliente) {
-      return res.status(404).json({ error: 'Cliente no encontrado' });
+    if (cliente) {
+      res.status(200).json(cliente);
+    } else {
+      res.status(404).json({ message: 'Cliente no encontrado' });
     }
-    res.status(200).json(cliente);
   } catch (error) {
-    console.error('Error al obtener cliente:', error);
-    res.status(500).json({ error: 'Error al obtener cliente' });
+    console.error(error);
+    res.status(500).json({ message: 'Error al obtener cliente' });
   }
 };
 
 // Actualizar un cliente
 const actualizarCliente = async (req, res) => {
-  const { id } = req.params;
-  const { nombre, apellido, identificacion, categoria } = req.body;
   try {
+    const { id } = req.params;
+    const { nombres, apellidos, identificacion, categoria, observacion } = req.body;
     const cliente = await Cliente.findByPk(id);
-    if (!cliente) {
-      return res.status(404).json({ error: 'Cliente no encontrado' });
+    if (cliente) {
+      await cliente.update({ nombres, apellidos, identificacion, categoria, observacion });
+      res.status(200).json(cliente);
+    } else {
+      res.status(404).json({ message: 'Cliente no encontrado' });
     }
-    cliente.nombre = nombre || cliente.nombre;
-    cliente.apellido = apellido || cliente.apellido;
-    cliente.identificacion = identificacion || cliente.identificacion;
-    cliente.categoria = categoria || cliente.categoria;
-    await cliente.save();
-    res.status(200).json(cliente);
   } catch (error) {
-    console.error('Error al actualizar cliente:', error);
-    res.status(500).json({ error: 'Error al actualizar cliente' });
+    console.error(error);
+    res.status(500).json({ message: 'Error al actualizar cliente' });
   }
 };
 
 // Eliminar un cliente
 const eliminarCliente = async (req, res) => {
-  const { id } = req.params;
   try {
+    const { id } = req.params;
     const cliente = await Cliente.findByPk(id);
-    if (!cliente) {
-      return res.status(404).json({ error: 'Cliente no encontrado' });
+    if (cliente) {
+      await cliente.destroy();
+      res.status(200).json({ message: 'Cliente eliminado' });
+    } else {
+      res.status(404).json({ message: 'Cliente no encontrado' });
     }
-    await cliente.destroy();
-    res.status(200).json({ message: 'Cliente eliminado' });
   } catch (error) {
-    console.error('Error al eliminar cliente:', error);
-    res.status(500).json({ error: 'Error al eliminar cliente' });
+    console.error(error);
+    res.status(500).json({ message: 'Error al eliminar cliente' });
   }
 };
 

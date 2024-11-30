@@ -1,10 +1,9 @@
 const { Sequelize } = require('sequelize');
+const config = require('./config'); // Asegúrate de que `config` existe y tiene la configuración necesaria
 
-// Configuración de la conexión
-const sequelize = new Sequelize('bd_prueba', 'postgres', '12345', {
-  host: 'localhost',
-  dialect: 'postgres',
-  logging: false, // Desactiva los logs de SQL si no los necesitas
+const sequelize = new Sequelize(config.DB_NAME, config.DB_USER, config.DB_PASSWORD, {
+  host: config.DB_HOST,
+  dialect: 'mysql', // Cambia a tu dialecto de base de datos si no usas MySQL
 });
 
 module.exports = sequelize;

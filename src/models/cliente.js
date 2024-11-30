@@ -1,26 +1,38 @@
+// src/models/cliente.js
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/sequelize');
 
+// Definición del modelo Cliente
 const Cliente = sequelize.define('Cliente', {
-  nombre: {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+  nombres: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  apellido: {
+  apellidos: {
     type: DataTypes.STRING,
     allowNull: false,
   },
   identificacion: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true,
+    unique: true, // Puede ser cédula o RUC
   },
   categoria: {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  observacion: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+  }
 }, {
-  timestamps: false, // Desactiva las columnas createdAt y updatedAt si no las necesitas
+  tableName: 'clientes', // Asegúrate de que el nombre coincida con el de tu tabla
+  timestamps: false, // Si no tienes campos createdAt/updatedAt
 });
 
 module.exports = Cliente;
